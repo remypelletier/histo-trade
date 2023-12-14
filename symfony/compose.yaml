@@ -1,7 +1,7 @@
 version: "3.1"
 
 services:
-  db:
+  mysql:
     image: mysql
     env_file:
       - .env
@@ -13,7 +13,9 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
     volumes:
-      - dbdata:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -24,10 +26,10 @@ services:
     ports:
       - "8080:80"
     environment:
-      PMA_HOST: db
+      PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     depends_on:
-      - db
+      - mysql
 
 volumes:
   dbdata:
