@@ -1,59 +1,52 @@
-"use client";
+import React, { useEffect } from 'react';
+import AddBrokerForm from '@/components/AddBrokerForm';
+import UserApikeysList from '@/components/UserApiKeyList';
+import Breadcumb from '@/components/Breadcumb';
+import { user } from '@/config';
 
-import React from "react";
-import { Label, Select, Button, TextInput } from "flowbite-react";
+const getBrokers = async () => {
+  const promise = await fetch('http://127.0.0.1:8000/api/brokers/');
+  const brokers = await promise.json();
+  return brokers['hydra:member'].map((broker: any) => {
+    return {
+      id: broker.id,
+      name: broker.name
+    };
+  });
+};
 
-export default function page() {
-  const brokers = [
-    { id: "0", name: "MEXC" },
-    { id: "2", name: "BINANCE" },
-    { id: "3", name: "BYBIT" },
-    { id: "4", name: "FTX" },
-  ];
+const getUserBrokerApiKeys = async (id: any, brokers: any) => {
+  const promise = await fetch(`http://localhost:8000/api/users/${id}/brokerApiKeys/`);
+  const brokerApiKeys = await promise.json();
+  return brokerApiKeys['hydra:member'].map((brokerApiKey: any) => {
+    return {
+      id: brokerApiKey.id,
+      accessKey: brokerApiKey.accessKey,
+      broker: brokers.find(
+        // populate broker
+        (broker: any) => broker.id === Number(brokerApiKey.broker.substr(-1, 1))
+      )
+    };
+  });
+};
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    console.log(formData.get("brokers"));
-    console.log(formData.get("keyName"));
-    console.log(formData.get("keySecret"));
+export default async function page() {
+  const brokers = await getBrokers();
+  const brokerApiKeys = await getUserBrokerApiKeys(user.id, brokers);
+  const handleSubmit = (payload: any) => {
+    console.log(payload);
   };
 
   return (
     <div>
-      <form className="flex max-w-md flex-col gap-4" onSubmit={handleSubmit}>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="brokers" value="Select your broker" />
-          </div>
-          <Select name="brokers" id="brokers" required>
-            {brokers.map((broker) => {
-              return <option value={broker.id}>{broker.name}</option>;
-            })}
-          </Select>
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="keyName" value="Key name" />
-          </div>
-          <TextInput
-            name="keyName"
-            id="keyName"
-            type="text"
-            placeholder="..."
-            required
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="keySecret" value="Key secret" />
-          </div>
-          <TextInput name="keySecret" id="keySecret" type="password" required />
-        </div>
-        <Button color="blue" type="submit">
-          Submit
-        </Button>
-      </form>
+      <Breadcumb links={['App', 'Brokers']} />
+      <h2 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl dark:text-white">Brokers management</h2>
+      <div className="block mb-6 p-6 bg-white border border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 ">
+        <h3 className="text-3xl font-bold dark:text-white mb-4">Add a broker Api</h3>
+        <AddBrokerForm brokers={brokers} />
+      </div>
+      <h3 className="text-3xl font-bold dark:text-white mb-4">My api keys</h3>
+      <UserApikeysList brokerApiKeys={brokerApiKeys} />
     </div>
   );
 }
