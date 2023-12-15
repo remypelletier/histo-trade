@@ -28,7 +28,7 @@ export default function Component() {
             <Sidebar.Item href="/" icon={HiChartPie}>
               Dashboard
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards}>
+            <Sidebar.Item href="/brokers" icon={HiViewBoards}>
               Brokers
             </Sidebar.Item>
             <Sidebar.Item href="/trades" icon={HiInbox}>
