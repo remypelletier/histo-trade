@@ -30,14 +30,15 @@ class User
     #[ORM\Column]
     private ?int $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userId')]
-    private ?BrokerApiKey $brokerApiKeyId = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BrokerApiKey::class, orphanRemoval: true)]
+    private Collection $brokerApiKeys;
 
-    #[ORM\OneToMany(mappedBy: 'userId', targetEntity: Position::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Position::class)]
     private Collection $positions;
 
     public function __construct()
     {
+        $this->brokerApiKeys = new ArrayCollection();
         $this->positions = new ArrayCollection();
     }
 
@@ -106,14 +107,32 @@ class User
         return $this;
     }
 
-    public function getBrokerApiKeyId(): ?BrokerApiKey
+    /**
+     * @return Collection<int, BrokerApiKey>
+     */
+    public function getBrokerApiKeys(): Collection
     {
-        return $this->brokerApiKeyId;
+        return $this->brokerApiKeys;
     }
 
-    public function setBrokerApiKeyId(?BrokerApiKey $brokerApiKeyId): static
+    public function addBrokerApiKey(BrokerApiKey $brokerApiKey): static
     {
-        $this->brokerApiKeyId = $brokerApiKeyId;
+        if (!$this->brokerApiKeys->contains($brokerApiKey)) {
+            $this->brokerApiKeys->add($brokerApiKey);
+            $brokerApiKey->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrokerApiKey(BrokerApiKey $brokerApiKey): static
+    {
+        if ($this->brokerApiKeys->removeElement($brokerApiKey)) {
+            // set the owning side to null (unless already changed)
+            if ($brokerApiKey->getUser() === $this) {
+                $brokerApiKey->setUser(null);
+            }
+        }
 
         return $this;
     }
@@ -130,7 +149,7 @@ class User
     {
         if (!$this->positions->contains($position)) {
             $this->positions->add($position);
-            $position->setUserId($this);
+            $position->setUser($this);
         }
 
         return $this;
@@ -140,11 +159,12 @@ class User
     {
         if ($this->positions->removeElement($position)) {
             // set the owning side to null (unless already changed)
-            if ($position->getUserId() === $this) {
-                $position->setUserId(null);
+            if ($position->getUser() === $this) {
+                $position->setUser(null);
             }
         }
 
         return $this;
     }
+
 }

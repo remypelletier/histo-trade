@@ -43,9 +43,9 @@ class Position
     private ?int $endedTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'positions')]
-    private ?User $userId = null;
+    private ?user $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'positionId', targetEntity: Order::class)]
+    #[ORM\OneToMany(mappedBy: 'position', targetEntity: Order::class, orphanRemoval: true)]
     private Collection $orders;
 
     public function __construct()
@@ -166,14 +166,14 @@ class Position
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?user
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(?User $userId): static
+    public function setUser(?user $user): static
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }
@@ -190,7 +190,7 @@ class Position
     {
         if (!$this->orders->contains($order)) {
             $this->orders->add($order);
-            $order->setPositionId($this);
+            $order->setPosition($this);
         }
 
         return $this;
@@ -200,11 +200,12 @@ class Position
     {
         if ($this->orders->removeElement($order)) {
             // set the owning side to null (unless already changed)
-            if ($order->getPositionId() === $this) {
-                $order->setPositionId(null);
+            if ($order->getPosition() === $this) {
+                $order->setPosition(null);
             }
         }
 
         return $this;
     }
+
 }

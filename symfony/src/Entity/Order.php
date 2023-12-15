@@ -36,7 +36,8 @@ class Order
     private ?int $createdTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
-    private ?Position $positionId = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?position $position = null;
 
     public function getId(): ?int
     {
@@ -127,14 +128,14 @@ class Order
         return $this;
     }
 
-    public function getPositionId(): ?Position
+    public function getPosition(): ?position
     {
-        return $this->positionId;
+        return $this->position;
     }
 
-    public function setPositionId(?Position $positionId): static
+    public function setPosition(?position $position): static
     {
-        $this->positionId = $positionId;
+        $this->position = $position;
 
         return $this;
     }

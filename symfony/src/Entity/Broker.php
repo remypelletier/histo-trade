@@ -18,9 +18,6 @@ class Broker
     #[ORM\Column(length: 128)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'brokerId')]
-    private ?BrokerApiKey $brokerApiKeyId = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -34,18 +31,6 @@ class Broker
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getBrokerApiKeyId(): ?BrokerApiKey
-    {
-        return $this->brokerApiKeyId;
-    }
-
-    public function setBrokerApiKeyId(?BrokerApiKey $brokerApiKeyId): static
-    {
-        $this->brokerApiKeyId = $brokerApiKeyId;
 
         return $this;
     }
