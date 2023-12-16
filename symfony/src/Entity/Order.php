@@ -128,12 +128,12 @@ class Order
         return $this;
     }
 
-    public function getPosition(): ?position
+    public function getPosition(): ?Position
     {
         return $this->position;
     }
 
-    public function setPosition(?position $position): static
+    public function setPosition(?Position $position): static
     {
         $this->position = $position;
 

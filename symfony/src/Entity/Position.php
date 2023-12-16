@@ -48,6 +48,10 @@ class Position
     #[ORM\OneToMany(mappedBy: 'position', targetEntity: Order::class, orphanRemoval: true)]
     private Collection $orders;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?broker $broker = null;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -166,12 +170,12 @@ class Position
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -204,6 +208,18 @@ class Position
                 $order->setPosition(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBroker(): ?broker
+    {
+        return $this->broker;
+    }
+
+    public function setBroker(?broker $broker): static
+    {
+        $this->broker = $broker;
 
         return $this;
     }

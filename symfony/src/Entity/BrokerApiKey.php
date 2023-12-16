@@ -2,12 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\BrokerApiKeyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BrokerApiKeyRepository::class)]
+#[ApiResource]
+#[ApiResource(
+    uriTemplate: '/users/{id}/brokerApiKeys', 
+    uriVariables: [
+        'id' => new Link(fromClass: User::class, fromProperty: 'brokerApiKeys')
+    ], 
+    operations: [new GetCollection()]
+)]
 class BrokerApiKey
 {
     #[ORM\Id]
@@ -23,11 +32,11 @@ class BrokerApiKey
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?broker $broker = null;
+    private ?Broker $broker = null;
 
     #[ORM\ManyToOne(inversedBy: 'brokerApiKeys')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $user = null;
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -62,24 +71,24 @@ class BrokerApiKey
         return $this;
     }
 
-    public function getBroker(): ?broker
+    public function getBroker(): ?Broker
     {
         return $this->broker;
     }
 
-    public function setBroker(?broker $broker): static
+    public function setBroker(?Broker $broker): static
     {
         $this->broker = $broker;
 
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
