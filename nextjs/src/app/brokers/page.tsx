@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import AddBrokerForm from '@/components/AddBrokerForm';
 import UserApikeysList from '@/components/UserApiKeyList';
 import Breadcumb from '@/components/Breadcumb';
+import SyncTradeBrokerForm from '@/components/SyncTradeBrokerForm';
 import { user, api } from '@/config';
 
 import useSWR from 'swr';
@@ -56,6 +57,8 @@ export default function page() {
       </div>
       <h3 className="text-3xl font-bold dark:text-white mb-4">My api keys</h3>
       <UserApikeysList brokerApiKeys={brokerApiKeys} brokers={brokers} mutate={mutate} />
+      <h3 className="text-3xl font-bold dark:text-white mb-4 mt-6">Sync trades</h3>
+      <SyncTradeBrokerForm brokerApiKeys={brokerApiKeys} brokers={brokers} />
     </div>
   );
 }

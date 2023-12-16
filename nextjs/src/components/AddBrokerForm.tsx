@@ -6,7 +6,7 @@ import { user, api } from '@/config';
 import { toast } from 'react-toastify';
 
 export default function AddBrokerForm({ brokers, brokerApiKeys, mutate }: any) {
-  const [selectedBroker, setSelectedBroker] = useState(brokers[0].id);
+  const [selectedBroker, setSelectedBroker] = useState(brokers[0]?.id);
   const [accessKey, setAccessKey] = useState('');
   const [secretKey, setSecretKey] = useState('');
 
