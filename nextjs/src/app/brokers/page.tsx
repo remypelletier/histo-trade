@@ -1,41 +1,50 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import AddBrokerForm from '@/components/AddBrokerForm';
 import UserApikeysList from '@/components/UserApiKeyList';
 import Breadcumb from '@/components/Breadcumb';
-import { user } from '@/config';
+import { user, api } from '@/config';
 
-const getBrokers = async () => {
-  const promise = await fetch('http://127.0.0.1:8000/api/brokers/');
-  const brokers = await promise.json();
-  return brokers['hydra:member'].map((broker: any) => {
-    return {
-      id: broker.id,
-      name: broker.name
-    };
-  });
-};
+import useSWR from 'swr';
 
-const getUserBrokerApiKeys = async (id: any, brokers: any) => {
-  const promise = await fetch(`http://localhost:8000/api/users/${id}/brokerApiKeys/`);
-  const brokerApiKeys = await promise.json();
-  return brokerApiKeys['hydra:member'].map((brokerApiKey: any) => {
-    return {
-      id: brokerApiKey.id,
-      accessKey: brokerApiKey.accessKey,
-      broker: brokers.find(
-        // populate broker
-        (broker: any) => broker.id === Number(brokerApiKey.broker.substr(-1, 1))
-      )
-    };
-  });
-};
+const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-export default async function page() {
-  const brokers = await getBrokers();
-  const brokerApiKeys = await getUserBrokerApiKeys(user.id, brokers);
-  const handleSubmit = (payload: any) => {
-    console.log(payload);
+const useBrokers = () => {
+  const { data, error } = useSWR(`${api.baseUrl}/api/brokers/`, fetcher);
+
+  const brokers = data
+    ? data['hydra:member'].map(broker => ({
+        id: broker.id,
+        name: broker.name
+      }))
+    : [];
+
+  return {
+    brokers,
+    isLoading: !error && !data,
+    isError: error
   };
+};
+
+const useUserBrokerApiKeys = id => {
+  const { brokers } = useBrokers(); // Utilisation du hook useBrokers
+  const { data, error, mutate } = useSWR(`${api.baseUrl}/api/users/${id}/brokerApiKeys/`, fetcher);
+
+  return {
+    mutate,
+    brokerApiKeys: data,
+    isLoading: !error && !data,
+    isError: error
+  };
+};
+
+export default function page() {
+  const { brokers, isLoading: isLoadingBrokers, isError: isErrorBrokers } = useBrokers();
+  const { brokerApiKeys, isLoading: isLoadingBrokerApiKeys, isError: isErrorBrokerApiKeys, mutate } = useUserBrokerApiKeys(user.id);
+
+  if (isLoadingBrokers && isLoadingBrokerApiKeys) return <div>Loading...</div>;
+  if (isErrorBrokers && isErrorBrokerApiKeys) return <div>Error</div>;
 
   return (
     <div>
@@ -43,10 +52,10 @@ export default async function page() {
       <h2 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl dark:text-white">Brokers management</h2>
       <div className="block mb-6 p-6 bg-white border border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 ">
         <h3 className="text-3xl font-bold dark:text-white mb-4">Add a broker Api</h3>
-        <AddBrokerForm brokers={brokers} />
+        <AddBrokerForm brokers={brokers} brokerApiKeys={brokerApiKeys} mutate={mutate} />
       </div>
       <h3 className="text-3xl font-bold dark:text-white mb-4">My api keys</h3>
-      <UserApikeysList brokerApiKeys={brokerApiKeys} />
+      <UserApikeysList brokerApiKeys={brokerApiKeys} brokers={brokers} mutate={mutate} />
     </div>
   );
 }

@@ -2,24 +2,52 @@
 
 import React, { useState } from 'react';
 import { Label, Select, Button, TextInput } from 'flowbite-react';
+import { user, api } from '@/config';
+import { toast } from 'react-toastify';
 
-export default function AddBrokerForm({ brokers, handleSubmit }: any) {
+export default function AddBrokerForm({ brokers, brokerApiKeys, mutate }: any) {
   const [selectedBroker, setSelectedBroker] = useState(brokers[0].id);
-  const [keyName, setKeyName] = useState('');
-  const [keySecret, setKeySecret] = useState('');
+  const [accessKey, setAccessKey] = useState('');
+  const [secretKey, setSecretKey] = useState('');
 
-  const handleValidations = (e: any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     const formData = {
-      keyName: keyName,
-      keySecret: keySecret,
-      brokerId: Number(selectedBroker)
+      accessKey: accessKey,
+      secretKey: secretKey,
+      broker: `/api/brokers/${selectedBroker}`,
+      user: `/api/users/${user.id}` // TODO: authenticated user
     };
-    handleSubmit(formData);
+    const requestConfig = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/ld+json'
+      },
+      body: JSON.stringify(formData)
+    };
+    fetch(`${api.baseUrl}/api/broker_api_keys`, requestConfig)
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        delete res['@context'];
+        brokerApiKeys['hydra:member'].push(res);
+        mutate(brokerApiKeys);
+        toast.success('Api key successfully added!', {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: 0.3,
+          theme: 'dark'
+        });
+      });
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleValidations}>
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       {/* Select Broker */}
       <div>
         <div className="mb-2 block">
@@ -37,17 +65,17 @@ export default function AddBrokerForm({ brokers, handleSubmit }: any) {
       {/* Key Name */}
       <div>
         <div className="mb-2 block">
-          <Label htmlFor="keyName" value="Key name" />
+          <Label htmlFor="accessKey" value="Key name" />
         </div>
-        <TextInput name="keyName" id="keyName" type="text" value={keyName} onChange={e => setKeyName(e.target.value)} required />
+        <TextInput name="accessKey" id="accessKey" type="text" value={accessKey} onChange={e => setAccessKey(e.target.value)} required />
       </div>
 
       {/* Key Secret */}
       <div>
         <div className="mb-2 block">
-          <Label htmlFor="keySecret" value="Key secret" />
+          <Label htmlFor="secretKey" value="Key secret" />
         </div>
-        <TextInput name="keySecret" id="keySecret" type="password" value={keySecret} onChange={e => setKeySecret(e.target.value)} required />
+        <TextInput name="secretKey" id="secretKey" type="password" value={secretKey} onChange={e => setSecretKey(e.target.value)} required />
       </div>
 
       {/* Submit Button */}

@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,6 +17,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar></Navbar>
         <Sidebar></Sidebar>
         <div className="block pt-[110px] pl-[285px] pr-7 pb-7 h-full w-full dark:bg-gray-800">{children}</div>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable={false}
+          pauseOnHover
+          theme="dark"
+        />
       </body>
     </html>
   );
