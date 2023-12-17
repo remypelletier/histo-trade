@@ -29,8 +29,8 @@ class User
     #[ORM\Column(length: 64)]
     private ?string $role = null;
 
-    #[ORM\Column]
-    private ?int $createdAt = null;
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BrokerApiKey::class, orphanRemoval: true)]
     private Collection $brokerApiKeys;

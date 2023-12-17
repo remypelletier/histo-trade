@@ -52,6 +52,12 @@ class Position
     #[ORM\JoinColumn(nullable: false)]
     private ?broker $broker = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $fee = null;
+
+    #[ORM\Column]
+    private ?int $brokerPositionId = null;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -220,6 +226,30 @@ class Position
     public function setBroker(?broker $broker): static
     {
         $this->broker = $broker;
+
+        return $this;
+    }
+
+    public function getFee(): ?float
+    {
+        return $this->fee;
+    }
+
+    public function setFee(?float $fee): static
+    {
+        $this->fee = $fee;
+
+        return $this;
+    }
+
+    public function getBrokerPositionId(): ?int
+    {
+        return $this->brokerPositionId;
+    }
+
+    public function setBrokerPositionId(int $brokerPositionId): static
+    {
+        $this->brokerPositionId = $brokerPositionId;
 
         return $this;
     }
