@@ -36,11 +36,11 @@ class Position
     #[ORM\Column(nullable: true)]
     private ?float $leverage = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $createdTimestamp = null;
+    #[ORM\Column(nullable: false)]
+    private ?int $createdTimestamp = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $endedTimestamp = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $endedTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'positions')]
     private ?user $user = null;

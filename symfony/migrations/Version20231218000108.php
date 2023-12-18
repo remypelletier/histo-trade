@@ -20,7 +20,7 @@ final class Version20231218000108 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE position CHANGE created_timestamp created_timestamp DATETIME DEFAULT NULL, CHANGE ended_timestamp ended_timestamp DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE position CHANGE created_timestamp created_timestamp DOUBLE DEFAULT NULL, CHANGE ended_timestamp ended_timestamp DOUBLE DEFAULT NULL');
         $this->addSql('ALTER TABLE user CHANGE created_at created_at DATETIME NOT NULL');
     }
 
