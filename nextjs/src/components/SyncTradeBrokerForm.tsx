@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Label, Select, Button, TextInput } from 'flowbite-react';
+import { api } from '@/config';
 
 export default function SyncTradeBrokerForm({ brokerApiKeys, brokers }: any) {
   const [selectedApi, setSelectedApi] = useState('');
@@ -10,6 +11,25 @@ export default function SyncTradeBrokerForm({ brokerApiKeys, brokers }: any) {
     console.log(apikey.secretKey);
     console.log(apikey.accessKey);
     console.log(broker.name);
+
+    const formData = {
+      apiKeyId: selectedApi
+    };
+    const requestConfig = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/ld+json'
+      },
+      body: JSON.stringify(formData)
+    };
+    fetch(`${api.baseUrl}/api/sync_position`, requestConfig)
+      .then(res => {
+        console.log(res);
+        return res.json();
+      })
+      .then(res => {
+        console.log(res);
+      });
     // TODO: call to api from the selected broker
     // populate trades database
   };

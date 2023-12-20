@@ -1,8 +1,8 @@
 export const user = {
   id: 1,
-  firstname: 'Tom',
-  lastname: 'Bayou',
-  email: 'tombayou@gmail.com',
+  firstname: 'John',
+  lastname: 'Doe',
+  email: 'johndoe@gmail.com',
   role: 'USER'
 };
 

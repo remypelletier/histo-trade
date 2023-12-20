@@ -6,8 +6,20 @@ use App\Repository\PositionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
+
 
 #[ORM\Entity(repositoryClass: PositionRepository::class)]
+#[ApiResource]
+#[ApiResource(
+    uriTemplate: '/users/{id}/positions', 
+    uriVariables: [
+        'id' => new Link(fromClass: User::class, fromProperty: 'positions')
+    ], 
+    operations: [new GetCollection()]
+)]
 class Position
 {
     #[ORM\Id]
@@ -43,14 +55,14 @@ class Position
     private ?int $endedTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'positions')]
-    private ?user $user = null;
+    private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'position', targetEntity: Order::class, orphanRemoval: true)]
     private Collection $orders;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?broker $broker = null;
+    private ?Broker $broker = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $fee = null;
@@ -218,12 +230,12 @@ class Position
         return $this;
     }
 
-    public function getBroker(): ?broker
+    public function getBroker(): ?Broker
     {
         return $this->broker;
     }
 
-    public function setBroker(?broker $broker): static
+    public function setBroker(?Broker $broker): static
     {
         $this->broker = $broker;
 
