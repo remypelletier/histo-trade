@@ -18,10 +18,10 @@ class Order
     private ?float $open = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $fees = null;
+    private ?float $fee = null;
 
     #[ORM\Column(length: 64, nullable: true)]
-    private ?string $feesType = null;
+    private ?string $feeType = null;
 
     #[ORM\Column(length: 32)]
     private ?string $side = null;
@@ -33,11 +33,14 @@ class Order
     private ?float $leverage = null;
 
     #[ORM\Column(nullable: false)]
-    private ?int $createdTimestamp = null;
+    private ?float $createdTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?position $position = null;
+
+    #[ORM\Column]
+    private ?string $brokerOrderId = null;
 
     public function getId(): ?int
     {
@@ -56,26 +59,26 @@ class Order
         return $this;
     }
 
-    public function getFees(): ?float
+    public function getFee(): ?float
     {
-        return $this->fees;
+        return $this->fee;
     }
 
-    public function setFees(?float $fees): static
+    public function setFee(?float $fee): static
     {
-        $this->fees = $fees;
+        $this->fee = $fee;
 
         return $this;
     }
 
-    public function getFeesType(): ?string
+    public function getFeeType(): ?string
     {
-        return $this->feesType;
+        return $this->feeType;
     }
 
-    public function setFeesType(?string $feesType): static
+    public function setFeeType(?string $feeType): static
     {
-        $this->feesType = $feesType;
+        $this->feeType = $feeType;
 
         return $this;
     }
@@ -116,12 +119,12 @@ class Order
         return $this;
     }
 
-    public function getCreatedTimestamp(): ?int
+    public function getCreatedTimestamp(): ?float
     {
         return $this->createdTimestamp;
     }
 
-    public function setCreatedTimestamp(?int $createdTimestamp): static
+    public function setCreatedTimestamp(?float $createdTimestamp): static
     {
         $this->createdTimestamp = $createdTimestamp;
 
@@ -136,6 +139,18 @@ class Order
     public function setPosition(?Position $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getBrokerOrderId(): ?string
+    {
+        return $this->brokerOrderId;
+    }
+
+    public function setBrokerOrderId(string $brokerOrderId): static
+    {
+        $this->brokerOrderId = $brokerOrderId;
 
         return $this;
     }

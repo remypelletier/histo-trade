@@ -49,10 +49,10 @@ class Position
     private ?float $leverage = null;
 
     #[ORM\Column(nullable: false)]
-    private ?int $createdTimestamp = null;
+    private ?float $createdTimestamp = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $endedTimestamp = null;
+    private ?float $endedTimestamp = null;
 
     #[ORM\ManyToOne(inversedBy: 'positions')]
     private ?User $user = null;
@@ -164,24 +164,24 @@ class Position
         return $this;
     }
 
-    public function getCreatedTimestamp(): ?int
+    public function getCreatedTimestamp(): ?float
     {
         return $this->createdTimestamp;
     }
 
-    public function setCreatedTimestamp(?int $createdTimestamp): static
+    public function setCreatedTimestamp(?float $createdTimestamp): static
     {
         $this->createdTimestamp = $createdTimestamp;
 
         return $this;
     }
 
-    public function getEndedTimestamp(): ?int
+    public function getEndedTimestamp(): ?float
     {
         return $this->endedTimestamp;
     }
 
-    public function setEndedTimestamp(?int $endedTimestamp): static
+    public function setEndedTimestamp(?float $endedTimestamp): static
     {
         $this->endedTimestamp = $endedTimestamp;
 

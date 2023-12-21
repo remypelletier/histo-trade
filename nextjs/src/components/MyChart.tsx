@@ -19,7 +19,9 @@ const MyChart = ({ kLines, position }: any) => {
         timeVisible: true,
         secondsVisible: false // Les secondes ne sont pas nécessaires pour une granularité à la minute
       },
-
+      crosshair: {
+        mode: 0
+      },
       grid: {
         vertLines: {
           color: 'rgba(42, 46, 57, 0.6)' // Lignes verticales
@@ -30,31 +32,39 @@ const MyChart = ({ kLines, position }: any) => {
       }
     });
 
-    const candleSeries = chart.addCandlestickSeries({});
+    const candleSeries = chart.addCandlestickSeries({
+      priceLineVisible: false,
+      priceFormat: {
+        type: 'price',
+        precision: 3,
+        minMove: 0.001
+      }
+    });
     candleSeries.setData(kLines);
 
-    const markers = [
-      {
-        time: position.createdTimestamp / 1000,
-        position: 'belowBar',
-        color: '#00a400',
-        shape: 'arrowUp',
-        text: 'Buy'
-      },
-      {
-        time: position.endedTimestamp / 1000,
-        position: 'aboveBar',
-        color: '#DC143C',
-        shape: 'arrowDown',
-        text: 'Sell'
-      }
-    ];
+    const markers = position.orders.map((order: any) => {
+      const position = order.side === 'BUY' ? 'belowBar' : 'aboveBar';
+      const color = order.side === 'BUY' ? '#00a400' : '#DC143C';
+      const shape = order.side === 'BUY' ? 'arrowUp' : 'arrowDown';
+      const text = `${order.side === 'BUY' ? 'Buy' : 'Sell'} @${order.quantity} - ${order.open}`;
 
+      return {
+        time: order.createdTimestamp / 1000,
+        position: position,
+        color: color,
+        shape: shape,
+        text: text
+      };
+    });
+
+    markers.sort((markerA, markerB) => {
+      return markerA.time - markerB.time;
+    });
     candleSeries.setMarkers(markers);
 
     const sellPriceLine = {
       price: position.closeAverage,
-      color: '#3179F5',
+      color: '#DC143C',
       lineWidth: 1,
       lineStyle: 1, // LineStyle.Dashed
       axisLabelVisible: true,
@@ -62,7 +72,7 @@ const MyChart = ({ kLines, position }: any) => {
     };
     const buyPriceLine = {
       price: position.openAverage,
-      color: '#3179F5',
+      color: '#00a400',
       lineWidth: 1,
       lineStyle: 1, // LineStyle.Dashed
       axisLabelVisible: true,

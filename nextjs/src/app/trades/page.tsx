@@ -12,21 +12,22 @@ export default async function page() {
   const positionsPromise = await fetch(`${api.baseUrl}/api/users/1/positions?page=1`);
   const positions = await positionsPromise.json();
 
+  const selectedPosition = 3;
+
   // lorsqu'une position est sélectionné récupérer le temps pour définir l'intervale
   // rechercher les données sur l'api du broker
   // afficher les positions et les données sur le chart
 
   //  const file = await fs.readFile(process.cwd() + '/data/btcusdt15min.json', 'utf8');
   //const data = JSON.parse(file);
-  console.log(positions['hydra:member'][0].symbol);
-  const endpoint = `https://api.mexc.com/api/v3/klines?symbol=${'BTCUSDT'}&interval=1m&startTime=${positions['hydra:member'][8].createdTimestamp - 2000000}&endTime=${
-    positions['hydra:member'][8].endedTimestamp + 2000000
+  const symbol = positions['hydra:member'][selectedPosition].symbol.replace('_', '');
+  const endpoint = `https://api.mexc.com/api/v3/klines?symbol=${symbol}&interval=1m&startTime=${positions['hydra:member'][selectedPosition].createdTimestamp - 8000000}&endTime=${
+    positions['hydra:member'][selectedPosition].endedTimestamp + 8000000
   }`;
   const file = await fetch(endpoint);
   const data = await file.json();
 
   const kLines = data.map((elem: any) => {
-    console.log(elem[0]);
     return {
       time: elem[0] / 1000,
       open: parseFloat(elem[1]),
@@ -38,11 +39,9 @@ export default async function page() {
 
   return (
     <div className="flex">
-      {/* Chart */}
       <div className="max-w-9/12 w-9/12 bg-slate-400 h-screen">
-        <MyChart kLines={kLines} position={positions['hydra:member'][8]} />
+        <MyChart kLines={kLines} position={positions['hydra:member'][selectedPosition]} />
       </div>
-      {/* List trade */}
       <div className="w-3/12 bg-slate-300 dark:bg-gray-800">
         <MyTrades positions={positions} />
       </div>
