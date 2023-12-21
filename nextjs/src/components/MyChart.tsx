@@ -7,8 +7,6 @@ import moment from 'moment';
 const MyChart = ({ kLines, position }: any) => {
   const chartContainerRef = useRef('chartId');
 
-  console.log(position);
-
   useEffect(() => {
     const chart = createChart(chartContainerRef.current, {
       layout: {
@@ -85,7 +83,7 @@ const MyChart = ({ kLines, position }: any) => {
     chart.timeScale().fitContent();
 
     return () => chart.remove();
-  }, []);
+  }, [kLines]);
 
   return <div ref={chartContainerRef} style={{ width: '100%', height: '100%' }} />;
 };

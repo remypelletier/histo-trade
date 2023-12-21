@@ -1,41 +1,58 @@
-import React from 'react';
-import { createChart } from 'lightweight-charts';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import MyChart from '@/components/MyChart';
-import { promises as fs } from 'fs';
 import MyTrades from '@/components/MyTrades';
 import { api } from '@/config';
-import moment from 'moment';
 
-export default async function page() {
-  // fetch l'api pour afficher les positions de l'utilisateur connecté
+export default function page() {
+  const [selectedPosition, setSelectedPosition] = useState(0);
+  const [positions, setPositions] = useState(null);
+  const [kLines, setKLines] = useState(null);
 
-  const positionsPromise = await fetch(`${api.baseUrl}/api/users/1/positions?page=1`);
-  const positions = await positionsPromise.json();
+  useEffect(() => {
+    if (!positions) {
+      fetch(`${api.baseUrl}/api/users/1/positions?page=1`)
+        .then(res => res.json())
+        .then(res => {
+          setPositions(res);
+        });
+    }
+    if (positions) {
+      const position = positions['hydra:member'][selectedPosition];
+      const symbol = position.symbol;
+      const endpoint = `https://contract.mexc.com/api/v1/contract/kline/${symbol}?interval=Min1&start=${position.createdTimestamp / 1000 - 16000}&end=${
+        position.endedTimestamp / 1000 + 16000
+      }`;
+      const endpointEncoded = encodeURIComponent(endpoint);
+      fetch(`/api?url=${endpointEncoded}`)
+        .then(res => {
+          return res.json();
+        })
+        .then(res => {
+          const data = res['data'];
+          setKLines(
+            data['time'].map((elem: any, index: any) => {
+              return {
+                time: data['time'][index],
+                open: data['open'][index],
+                high: data['high'][index],
+                low: data['low'][index],
+                close: data['close'][index]
+              };
+            })
+          );
+        });
+    }
+  }, [selectedPosition, positions]);
 
-  const selectedPosition = 3;
+  const handleClick = res => {
+    console.log(res);
+    setSelectedPosition(res);
+  };
 
-  // lorsqu'une position est sélectionné récupérer le temps pour définir l'intervale
-  // rechercher les données sur l'api du broker
-  // afficher les positions et les données sur le chart
-
-  //  const file = await fs.readFile(process.cwd() + '/data/btcusdt15min.json', 'utf8');
-  //const data = JSON.parse(file);
-  const symbol = positions['hydra:member'][selectedPosition].symbol.replace('_', '');
-  const endpoint = `https://api.mexc.com/api/v3/klines?symbol=${symbol}&interval=1m&startTime=${positions['hydra:member'][selectedPosition].createdTimestamp - 8000000}&endTime=${
-    positions['hydra:member'][selectedPosition].endedTimestamp + 8000000
-  }`;
-  const file = await fetch(endpoint);
-  const data = await file.json();
-
-  const kLines = data.map((elem: any) => {
-    return {
-      time: elem[0] / 1000,
-      open: parseFloat(elem[1]),
-      high: parseFloat(elem[2]),
-      low: parseFloat(elem[3]),
-      close: parseFloat(elem[4])
-    };
-  });
+  if (!positions) return <p>Loading</p>;
+  if (!kLines) return <p>Loading</p>;
 
   return (
     <div className="flex">
@@ -43,8 +60,9 @@ export default async function page() {
         <MyChart kLines={kLines} position={positions['hydra:member'][selectedPosition]} />
       </div>
       <div className="w-3/12 bg-slate-300 dark:bg-gray-800">
-        <MyTrades positions={positions} />
+        <MyTrades positions={positions} onClick={handleClick} />
       </div>
+      {/* <FetchComponent position={positions['hydra:member'][selectedPosition]} /> */}
     </div>
   );
 }

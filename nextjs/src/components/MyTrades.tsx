@@ -3,7 +3,7 @@
 import React from 'react';
 import { Table } from 'flowbite-react';
 
-export default function MyTrades({ positions }) {
+export default function MyTrades({ positions, onClick: handleClick }: any) {
   return (
     <Table className="w-full">
       <Table.Head>
@@ -13,9 +13,9 @@ export default function MyTrades({ positions }) {
         <Table.HeadCell>Date</Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y">
-        {positions['hydra:member'].map(position => {
+        {positions['hydra:member'].map((position: any, index: number) => {
           return (
-            <Table.Row key={position.id} className="bg-white dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-700">
+            <Table.Row onClick={() => handleClick(index)} key={position.id} className="bg-white dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-700">
               <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">{position.symbol}</Table.Cell>
               <Table.Cell>{position.pnl}</Table.Cell>
               <Table.Cell>{position.side}</Table.Cell>
