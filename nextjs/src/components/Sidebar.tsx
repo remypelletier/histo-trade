@@ -2,7 +2,7 @@
 
 import { Sidebar } from 'flowbite-react';
 import { BiBuoy } from 'react-icons/bi';
-import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from 'react-icons/hi';
+import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards, HiCalendar } from 'react-icons/hi';
 import Link from 'next/link';
 
 export default function Component() {
@@ -17,11 +17,14 @@ export default function Component() {
             <Sidebar.Item href="/" icon={HiChartPie}>
               Dashboard
             </Sidebar.Item>
+            <Sidebar.Item href="/chart" icon={HiInbox}>
+              Chart
+            </Sidebar.Item>
             <Sidebar.Item href="/brokers" icon={HiViewBoards}>
               Brokers
             </Sidebar.Item>
-            <Sidebar.Item href="/trades" icon={HiInbox}>
-              Trades
+            <Sidebar.Item href="#" icon={HiCalendar}>
+              Calendar
             </Sidebar.Item>
             <Sidebar.Item href="#" icon={HiUser}>
               Settings

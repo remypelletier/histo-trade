@@ -41,10 +41,10 @@ const MyChart = ({ kLines, position }: any) => {
     candleSeries.setData(kLines);
 
     const markers = position.orders.map((order: any) => {
-      const position = order.side === 'BUY' ? 'belowBar' : 'aboveBar';
-      const color = order.side === 'BUY' ? '#00a400' : '#DC143C';
-      const shape = order.side === 'BUY' ? 'arrowUp' : 'arrowDown';
-      const text = `${order.side === 'BUY' ? 'Buy' : 'Sell'} @${order.quantity} - ${order.open}`;
+      const position = order.side === 'OPENLONG' || order.side === 'CLOSESHORT' ? 'belowBar' : 'aboveBar';
+      const color = order.side === 'OPENLONG' || order.side === 'CLOSESHORT' ? '#00a400' : '#DC143C';
+      const shape = order.side === 'OPENLONG' || order.side === 'CLOSESHORT' ? 'arrowUp' : 'arrowDown';
+      const text = `${order.side === 'OPENLONG' || order.side === 'OPENSHORT' ? 'Open' : 'Close'} @${order.quantity} - ${order.open}`;
 
       return {
         time: order.createdTimestamp / 1000,
@@ -66,7 +66,7 @@ const MyChart = ({ kLines, position }: any) => {
       lineWidth: 1,
       lineStyle: 1, // LineStyle.Dashed
       axisLabelVisible: true,
-      title: 'Avg sell'
+      title: 'Avg close'
     };
     const buyPriceLine = {
       price: position.openAverage,
@@ -74,7 +74,7 @@ const MyChart = ({ kLines, position }: any) => {
       lineWidth: 1,
       lineStyle: 1, // LineStyle.Dashed
       axisLabelVisible: true,
-      title: 'Avg buy'
+      title: 'Avg open'
     };
 
     candleSeries.createPriceLine(sellPriceLine);
