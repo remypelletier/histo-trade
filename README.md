@@ -2,27 +2,27 @@
 
 ## Trading Centralization Project
 
-**Description**
+### Description
 
 This project allows you to centralize trades made on different exchanges. You will be able to see theses trades on a chart and track your performance.
 
-**Features**
+### Features
 
 - **Adding a broker:** Add a broker by entering its information (name, API key, etc.).
 - **Trade synchronization:** Synchronize trades from brokers via their APIs.
 - **Trade visualization:** Visualize trades on a graph, with filters and customization options.
 - **Performance tracking:** The project allows you to track the performance of your cryptocurrency investments (P&L, gains/losses, etc.).
 
-**Technologies**
+### Technologies
 
-It is developed with Symfony 6 as the backend and NextJs as the frontend. The database used is MySQL, and a Docker file (compose.yaml) allows you to create the database and a persistent volume.
+This project is developed with Symfony 6 as the backend and NextJs as the frontend. The database used is MySQL, and a Docker file (compose.yaml) allows you to create the database and a persistent volume.
 
 - **Backend:** Symfony 6
 - **Frontend:** NextJs, TailwindCss
 - **Database:** MySQL
 - **Docker:** Docker Compose
 
-**Dev Installation**
+### Development installation
 
 1. Clone the project:
 
@@ -64,25 +64,25 @@ npm run dev
 5. Access the application in your web browser: `http://localhost:3000`
 6. Access the API in your web browser: `http://localhost:8000/api`
 
-**Usage**
+### Usage
 
 1. Add your brokers.
 2. Add your API Keys.
 3. Synchronize your trades.
 4. Visualize your trades and track your performance.
 
-**Useful links**
+### Useful links
 
 - [https://symfony.com/](https://symfony.com/)
 - [https://react.dev/](https://react.dev/)
 - [https://www.mysql.com/](https://www.mysql.com/)
 - [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
 
-**Disclaimer**
+### Disclaimer
 
 This project is provided for informational purposes only and under development. It does not constitute investment advice.
 
-## Database schema
+### Database schema
 
 The first basic version of the database:
 https://dbdiagram.io/d/db_schema_v0-1-657b6f3c56d8064ca00ee3f4
